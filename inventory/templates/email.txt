@@ -1,0 +1,5 @@
+Hello {member['username']}, 
+
+You have been assigned the device {device['name']}
+
+Regards,
