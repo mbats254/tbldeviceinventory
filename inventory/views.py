@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, parser_classes ,renderer_classes
 from rest_framework.response import Response
-from .serializers import DeviceSerializer,  AdminSerializer, ResetPasswordSerializer , DeviceTypeSerializer , AllocationSerializer, UserSerializer, TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer, MemberSerializer, TeamLeadSerializer
+from .serializers import DeviceSerializer,  AdminSerializer, MemberSerializer, ResetPasswordSerializer , DeviceTypeSerializer , AllocationSerializer,  TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer,  TeamLeadSerializer
 from auth.serializers import MyTokenObtainPairSerializer
 from .models import Device, Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, Member, ResetPassword, DeviceType
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, JSONParser, FileUploadParser
@@ -189,9 +189,24 @@ def userUpdateProfile(request):
 
 @api_view(['POST'])
 def userSearchDevice(request):
-    devices = Device.objects.filter(name__contains = request.data['search_item']) | Device.objects.filter(__contains = request.data['search_item'])
-    serializer = DeviceSerializer(devices, many=True)
-    return Response(serializer.data)
+    # return Response(request.data['userUniqid'])
+    user = Member.objects.get(uniqid = request.data['userUniqid'])
+    userSerializer = MemberSerializer(user, many=False)
+    # return Response(userSerializer.data)    
+    userAllocation = Allocation.objects.filter(user_allocated = userSerializer.data['uniqid'])
+    userAllocationSerializer = AllocationSerializer(userAllocation, many=True)
+    # return Response(userAllocationSerializer.data)
+    foundArray = []
+    for allocation in userAllocationSerializer.data:
+        return Response(allocation['device_uniqid'])
+        deviceDetails = Device.objects.get(uniqid = allocation['device_uniqid'])
+        deviceSerializer = DeviceSerializer(deviceDetails, many=False)
+        deviceType = DeviceType.objects.get(uniqid = deviceSerializer.data['deviceTypeUniqid']) & DeviceType.objects.filter(name__contains = request.data['search_item']) | DeviceType.objects.filter(brand__contains = request.data['search_item']) 
+        foundArray.append(deviceType)
+        if len(foundArray) > 0:
+            return Response(foundArray)
+        else:
+            return Response('No Results found')
 
 @api_view(['POST'])
 def adminSingleUserDevices(request):    
@@ -912,8 +927,8 @@ def leadAllTeamUsersDevices(request):
 def leadAllTeamUsers(request, uniqid):
     member = Member.objects.get(uniqid=uniqid)
     serializer = MemberSerializer(member, many=False)
-    team = Team.objects.get(uniqid=serializer.data['uniqid'])    
-    team_members = Member.objects.get(uniqid = team)
+    team = Team.objects.get(uniqid=serializer.data['team'])    
+    team_members = Member.objects.filter(team = team)
     serializer =  MemberSerializer(team_members, many=True)
     return Response(serializer.data) 
 
@@ -986,7 +1001,7 @@ def viewDeviceAllocation(request):
 def viewTeamDamagedDevices(request, user_uniqid):      
     member = Member.objects.get(uniqid=user_uniqid)
     serializer = MemberSerializer(member, many=False) 
-    # return Response(serializer.data['rank'])
+    # return Response(serializer.data)
     # allDevices=[]
     # if serializer.data['rank'] == 'admin':
     devices = DamagedDevice.objects.all()
@@ -1021,8 +1036,9 @@ def viewTeamDamagedDevices(request, user_uniqid):
 @api_view(['POST'])
 def leadAllTeamMembers(request):
     # return Response(request.data)
-    user = Member.objects.get(uniqid = request.data['uniqid'])
-    serializer =  MemberSerializer(user, many=False)
+    member = Member.objects.get(uniqid=request.data['uniqid'])
+    serializer = MemberSerializer(member, many=False)
+    return Response(serializer.data)
     teamMembers = Member.objects.filter(team = serializer.data['team'])
     MemberSerializer =  MemberSerializer(teamMembers, many=True)
     # team = Team.objects.all()
