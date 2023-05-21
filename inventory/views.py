@@ -927,8 +927,9 @@ def leadAllTeamUsersDevices(request):
 def leadAllTeamUsers(request, uniqid):
     member = Member.objects.get(uniqid=uniqid)
     serializer = MemberSerializer(member, many=False)
-    team = Team.objects.get(uniqid=serializer.data['team'])    
-    team_members = Member.objects.filter(team = team)
+    team = Team.objects.get(uniqid=serializer.data['team'])
+    teamSerializer = TeamSerializer(team, many=False)
+    team_members = Member.objects.filter(team = teamSerializer.data['uniqid'])
     serializer =  MemberSerializer(team_members, many=True)
     return Response(serializer.data) 
 
