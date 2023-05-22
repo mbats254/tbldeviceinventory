@@ -47,6 +47,7 @@ urlpatterns = [
     # path("lead/team/team/devices/", views.leadTeamDevices, name="leadTeamDevices"),
     path("lead/view/damaged/devices/<str:user_uniqid>", views.viewTeamDamagedDevices, name="view_team_damaged_devices"),
     path("lead/view/devices/allocation/", views.viewDeviceAllocation, name="view_device_allocation"),
+    path("lead/return/device/office/", views.leadReturnDeviceOffice, name="leadReturnDeviceOffice"),
     path("lead/single/damaged/device/<str:uniqid>", views.singleTeamDamagedDevice, name="single_team_damaged_device"),
     # path("lead/add/team/shared/devices/", views.addTeamSharedDevice, name="add_team_shared_device"),
     path("lead/assign/new/device/", views.leadAssignNewDevice, name="lead_assign_new_device"),

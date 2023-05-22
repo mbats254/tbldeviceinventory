@@ -127,6 +127,18 @@ class TeamLead(models.Model):
     
     def __str__(self):
         return f"{self.name}"
+
+class ReturnToOffice(models.Model):
+    device_uniqid =  models.CharField(max_length=70)
+    allocation_uniqid = models.CharField(max_length=70, blank=True, null=True)
+    condition = models.CharField(max_length=70)
+    user_uniqid = models.CharField(max_length=70)
+    uniqid = models.CharField(max_length=35, default=uuid.uuid4, editable=False, unique=True)
+    
+    
+    def __str__(self):
+        return f"{self.name}"
+
     
     
         

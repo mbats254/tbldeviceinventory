@@ -184,6 +184,22 @@ def userUpdateProfile(request):
         # serializer.uniqid = uuid.uuid4()
         second_serializer.save()
     return Response(second_serializer.data) 
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser,FormParser,JSONParser,FileUploadParser])
+def leadReturnDeviceOffice(request): 
+    return Response(request.data) 
+    # daita = {request.data}  z
+    # return Response(request.data['user_photo']) 
+    # return Response(request.data)
+    user = Member.objects.get(username = request.data['username'])
+    # serializer =  MemberSerializer(user, many=False)
+    second_serializer = MemberSerializer(user, data=request.data, partial=True) 
+    # return Response(second_serializer.data) 
+    if second_serializer.is_valid():
+        # serializer.uniqid = uuid.uuid4()
+        second_serializer.save()
+    return Response(second_serializer.data) 
   
 
 
