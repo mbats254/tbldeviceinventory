@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Device, Allocation, Team, TeamAllocation, DamagedDevice, Member, ResetPassword, Notification, DeviceType
+from .models import Device, Allocation, Team, TeamAllocation, DamagedDevice, Member, ResetPassword,ReturnToOffice, Notification, DeviceType
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
@@ -13,3 +13,4 @@ admin.site.register(Member)
 admin.site.register(ResetPassword)
 admin.site.register(Notification)
 admin.site.register(DeviceType)
+admin.site.register(ReturnToOffice)

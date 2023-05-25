@@ -7,7 +7,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, parser_classes ,renderer_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, JSONParser, FileUploadParser
-
+from inventory.models import Notification
+from inventory.serializers import NotificationSerializer
 # Create your views here.
 
 
@@ -39,6 +40,5 @@ def allViews(request):
     return Response(api_urls)
     
 @api_view(['GET'])
-def getUser(request):
-   
+def getUser(request):   
     return Response(request.data['username'])
