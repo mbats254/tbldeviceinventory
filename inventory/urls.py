@@ -20,6 +20,7 @@ urlpatterns = [
     path("user/damaged/devices/", views.userDamagedDevices, name="userDamagedDevices"),
     path("user/team/devices/<str:user_uniqid>", views.userTeamDevices, name="userTeamDevices"),
     path("user/search/device", views.userSearchDevice, name="userSearchDevice"),
+    path("user/notifications/", views.userNotifications, name="userNotifications"),
     path("admin/", views.adminApiOverview, name="admin_api_overview"),
     path("admin/add/new/device/", views.adminAddNewDevice, name="admin_new_device_type"),
     path("admin/add/new/device/type/", views.adminAddNewDeviceType, name="admin_new_device_record"),

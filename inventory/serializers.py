@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Device, Notification,Admin, ReturnToOffice, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, User, DeviceType ,Member, ResetPassword
+from .models import Device, Notification,Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, User, DeviceType ,Member, ResetPassword, ReturnToOffice
 
 
 
@@ -64,7 +64,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = '__all__'
         
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = '__all__'        
+class ReturnToOfficeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReturnToOffice
+        fields = '__all__'        

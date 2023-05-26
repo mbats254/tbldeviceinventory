@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, parser_classes ,renderer_classes
 from rest_framework.response import Response
-from .serializers import DeviceSerializer,  AdminSerializer, MemberSerializer, ReturnToOfficeSerializer, ResetPasswordSerializer , DeviceTypeSerializer , AllocationSerializer,  TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer,  TeamLeadSerializer
+from .serializers import DeviceSerializer,  AdminSerializer, MemberSerializer,ReturnToOfficeSerializer, ResetPasswordSerializer , NotificationSerializer ,DeviceTypeSerializer , AllocationSerializer,  TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer,  TeamLeadSerializer
 from auth.serializers import MyTokenObtainPairSerializer
-from .models import Device, Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, Member, ResetPassword, DeviceType
+from .models import Device, Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, Member, ResetPassword, DeviceType, Notification
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, JSONParser, FileUploadParser
 from django.http import JsonResponse
 import uuid
@@ -188,14 +188,30 @@ def userUpdateProfile(request):
 @api_view(['POST'])
 @parser_classes([MultiPartParser,FormParser,JSONParser,FileUploadParser])
 def leadReturnDeviceOffice(request): 
-    # return Response(request.data['device_uniqid']) 
-    returntoOffice = ReturnToOfficeSerializer(data=request.data)
-    returntoOffice.data['uniqid'] = str(random.randint(10000000,1000000000000000))
-    if returntoOffice.is_valid():        
-        returntoOffice.save()
-        return Response(returntoOffice.data)
-    return Response(returntoOffice.errors)
-  
+    # return Response(request.data) 
+    # allocation = Allocation.objects.get(device_uniqid = request.data['device_uniqid']) & 
+    returnSerializer = ReturnToOfficeSerializer(data=request.data)
+    if returnSerializer.is_valid():
+        returnSerializer.save()
+        allocation = Allocation.objects.get(device_uniqid = returnSerializer.data['device_uniqid'],status = 1) 
+        data={"location": "office"}
+        allocationSerializer = AllocationSerializer(allocation, data=data, partial=True)
+        if allocationSerializer.is_valid():
+            allocationSerializer.save()
+            return Response(allocationSerializer.data)
+        return Response(allocationSerializer.errors)
+    return Response(returnSerializer.error)
+    # daita = {request.data}  z
+    # return Response(request.data['user_photo']) 
+    # return Response(request.data)
+    user = Member.objects.get(username = request.data['username'])
+    # serializer =  MemberSerializer(user, many=False)
+    second_serializer = MemberSerializer(user, data=request.data, partial=True) 
+    # return Response(second_serializer.data) 
+    if second_serializer.is_valid():
+        # serializer.uniqid = uuid.uuid4()
+        second_serializer.save()
+    return Response(second_serializer.data) 
   
 
 
@@ -289,6 +305,14 @@ def myDevices(request, uniqid):
 
     data_to_be_displayed['allDevices'] = allDevices
     return Response(data_to_be_displayed) 
+    
+@api_view(['POST'])
+def userNotifications(request):
+       
+    # return Response(request.data)
+    UserNotification = Notification.objects.filter(user_uniqid = request.data['user_uniqid'])
+    noficiationSerializer = NotificationSerializer(UserNotification, many=True)
+    return Response(noficiationSerializer.data)
 
  
 
@@ -451,13 +475,30 @@ def postExcelData(request, format=None):
             email=request.data['Email'],
             full_name=request.data['Full Name'],
             username = username
-        )
+         )
         user.set_password("PasswordDevice123!")
         user.save()
-        username = request.data['Email'].split('@')[0]
-        message = f'Hello '+request.data['Full Name']+',\n \n Welcome to the Techno Brain Device Inventory Application. \n  Please Wait for an approval from the Administrator to access your resources. \n \n Regards, \n Device Administrator' 
-    #     # return Response(serializer.data['username'])
-        send_mail('Welcome to Device Inventory',message,settings.EMAIL_HOST_USER,[request.data['Email']])
+    username = request.data['Email'].split('@')[0]
+    message = f'Hello '+request.data['Full Name']+',\n \n Welcome to the Techno Brain Device Inventory Application. \n  Please Wait for an approval from the Administrator to access your resources. \n \n Regards, \n Device Administrator' 
+#     # return Response(serializer.data['username'])
+    send_mail('Welcome to Device Inventory',message,settings.EMAIL_HOST_USER,[request.data['Email']])
+    memberSerializer = MemberSerializer(user, many=False)
+    data = {"title":" Welcome to the Techno Brain Device Inventory", "description": "Welcome to the Techno Brain Device Inventory Application. \n  Please Wait for an approval from the Administrator to access your resources.", "user_uniqid": memberSerializer.data['uniqid']}
+    notification = NotificationSerializer(data=data)
+    if notification.is_valid():
+        notification.save()
+        return Response(notification.data)
+    
+    admins = Member.objects.filter(rank = 'admin')
+    adminSerializer = MemberSerializer(admins, many=True)
+    for admin in adminSerializer.data:
+        data = {"title":" A new User needs to be approved", "description": "Please confirm the Member.", "user_uniqid": admin['uniqid']}
+        # "link": approvalLink
+        notification = NotificationSerializer(data=data)
+        if notification.is_valid():
+            notification.save()
+        return Response(notification.data)
+    # return Response(notification.errors)
     UserSerializer = MemberSerializer(user, many=False)
 
     
@@ -857,7 +898,12 @@ def leadAssignNewDevice(request):
             # return Response(serializer.data['username'])
             # msg_plain = render_to_string('templates/email.html', {'member': serializer.data, "device" : deviceSerializer.data})
             message = f'Hello '+serializer.data['username']+', you have been assigned '+deviceTypeSerializer.data['name']+' device'
-            
+            description = "You have been assigned "+deviceTypeSerializer.data['name']+" device"
+            link = "/view/device/assignment/:"+deviceTypeSerializer.data['uniqid']
+            data = {"title":" A New Device Assignment", "description": description, "link":link, "user_uniqid": serializer.data['uniqid']}
+            notification = NotificationSerializer(data=data)
+            if notification.is_valid():
+                notification.save()
             send_mail('Device Assigned',message,settings.EMAIL_HOST_USER,[serializer.data['email']])
             return Response(allocation_serializer.data)     
         # else:
@@ -883,7 +929,12 @@ def leadAssignNewDevice(request):
             # return Response(serializer.data['username'])
             # msg_plain = render_to_string('templates/email.html', {'member': serializer.data, "device" : deviceSerializer.data})
             message = f'Hello '+serializer.data['username']+', you have been assigned a '+deviceTypeSerializer.data['name']+' device'
-            
+            description = "You have been assigned "+deviceTypeSerializer.data['name']+" device"
+            link = "/view/device/assignment/:"+deviceTypeSerializer.data['uniqid']
+            data = {"title":" A New Device Assignment", "description": description, "link":link, "user_uniqid": serializer.data['uniqid']}
+            notification = NotificationSerializer(data=data)
+            if notification.is_valid():
+                notification.save()
             send_mail('Device Assigned',message,settings.EMAIL_HOST_USER,[serializer.data['email']])
             return Response(allocation_serializer.data) 
         # return Response(allocation_serializer.errors)  
