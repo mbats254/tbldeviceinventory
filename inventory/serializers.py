@@ -1,8 +1,13 @@
 from rest_framework import serializers
-from .models import Device, Notification,Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, User, DeviceType ,Member, ResetPassword
+from .models import Device, Notification,Admin, ReturnToOffice, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, User, DeviceType ,Member, ResetPassword
 
 
 
+        
+class ReturnToOfficeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReturnToOffice
+        fields = '__all__'
         
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:

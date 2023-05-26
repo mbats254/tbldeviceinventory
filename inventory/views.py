@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, parser_classes ,renderer_classes
 from rest_framework.response import Response
-from .serializers import DeviceSerializer,  AdminSerializer, MemberSerializer, ResetPasswordSerializer , DeviceTypeSerializer , AllocationSerializer,  TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer,  TeamLeadSerializer
+from .serializers import DeviceSerializer,  AdminSerializer, MemberSerializer, ReturnToOfficeSerializer, ResetPasswordSerializer , DeviceTypeSerializer , AllocationSerializer,  TeamSerializer, DamagedDeviceSerializer, TeamAllocationSerializer,  TeamLeadSerializer
 from auth.serializers import MyTokenObtainPairSerializer
 from .models import Device, Admin, Allocation, Team, TeamAllocation, TeamLead, DamagedDevice, Member, ResetPassword, DeviceType
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, JSONParser, FileUploadParser
@@ -184,6 +184,18 @@ def userUpdateProfile(request):
         # serializer.uniqid = uuid.uuid4()
         second_serializer.save()
     return Response(second_serializer.data) 
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser,FormParser,JSONParser,FileUploadParser])
+def leadReturnDeviceOffice(request): 
+    # return Response(request.data['device_uniqid']) 
+    returntoOffice = ReturnToOfficeSerializer(data=request.data)
+    returntoOffice.data['uniqid'] = str(random.randint(10000000,1000000000000000))
+    if returntoOffice.is_valid():        
+        returntoOffice.save()
+        return Response(returntoOffice.data)
+    return Response(returntoOffice.errors)
+  
   
 
 
