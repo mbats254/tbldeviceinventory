@@ -73,6 +73,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        
         user = Member.objects.create(
            
             email=validated_data['email'],
@@ -90,14 +91,14 @@ class RegisterSerializer(serializers.ModelSerializer):
     # uniqid = models.CharField(max_length=35, editable=False, default=uuid.uuid4() ,unique=True) 
     # link = models.CharField(max_length=70)
     # status = models.IntegerField(default=0)
-    # user_uniqid = models.CharField(max_length=35)
+        # user_uniqid = models.CharField(max_length=35)
         admins = Member.objects.filter(rank = 'admin')
         adminSerializer = MemberSerializer(admins, many=True)
-        for admin in adminSerializer.data:
-            data = {"title":" A new User needs to be approved", "description": "Please confirm the Member.", "link": approvalLink, "user_uniqid": admin['uniqid']}
-            notification = NotificationSerializer(data=data)
-            if notification.is_valid():
-                notification.save()
+        # for admin in adminSerializer.data:
+        #     data = {"title":" A new User needs to be approved", "description": "Please confirm the Member.", "link": approvalLink, "user_uniqid": admin['uniqid']}
+        #     notification = NotificationSerializer(data=data)
+        #     if notification.is_valid():
+        #         notification.save()
         # userSerializer = MemberSerializer(admins, many=True)
         # return Response(userSerializer.data)
         # notification = Notification.objects.create(
@@ -112,17 +113,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         # return Response(serializer.data['username'])
         send_mail('Welcome to Device Inventory',message,settings.EMAIL_HOST_USER,[validated_data['email']])
         approvalLink = 'http://localhost:3000/confirm/staff/member/'
-        memberSerializer = MemberSerializer(user, many=False)
-        data = {"title":" Welcome to the Techno Brain Device Inventory", "description": "Welcome to the Techno Brain Device Inventory Application. \n  Please Wait for an approval from the Administrator to access your resources.", "user_uniqid": adminSerializer.data['uniqid'] }
-        notification = NotificationSerializer(data=data)
-        if notification.is_valid():
-            notification.save()
-            # return Response(notification.data)
-            adminMessage = f'Hello Admin,\n \n A new User needs to be approved \n \n Please confirm the Member \n \n '+approvalLink+'\n\nRegards,\n Admin'
+        # memberSerializer = MemberSerializer(user, many=False)
+        # data = {"title":" Welcome to the Techno Brain Device Inventory", "description": "Welcome to the Techno Brain Device Inventory Application. \n  Please Wait for an approval from the Administrator to access your resources.", "user_uniqid": adminSerializer.data['uniqid'] }
+        # notification = NotificationSerializer(data=data)
+        # if notification.is_valid():
+        #     notification.save()
+        #     # return Response(notification.data)
+        #     adminMessage = f'Hello Admin,\n \n A new User needs to be approved \n \n Please confirm the Member \n \n '+approvalLink+'\n\nRegards,\n Admin'
             
-            send_mail('Approve New User',adminMessage,settings.EMAIL_HOST_USER,['deviceinventorytbl@gmail.com'])
-            return user  
-        return Response(notification.errors)
+        #     send_mail('Approve New User',adminMessage,settings.EMAIL_HOST_USER,['deviceinventorytbl@gmail.com'])
+        #     return user  
+        return Response(approvalLink)
         
        
 

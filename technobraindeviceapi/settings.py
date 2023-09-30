@@ -62,36 +62,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsPostCsrfMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
 ]
-# CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    # "http://deviceinventory.keshonect.co.ke",
-    "https://deviceinventory.keshonect.co.ke",
-    "http://localhost:3080",
-    "http://127.0.0.1:3000",
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
+
+
+
 
 ROOT_URLCONF = 'technobraindeviceapi.urls'
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
@@ -115,15 +91,15 @@ TEMPLATES = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
         
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # )
-}
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
+#     # 'DEFAULT_PERMISSION_CLASSES': (
+#     #     'rest_framework.permissions.IsAuthenticated',
+#     # )
+# }
 
 WSGI_APPLICATION = 'technobraindeviceapi.wsgi.application'
 
