@@ -156,16 +156,16 @@ def readExcel(request):
 
         # getting a particular sheet by name out of many sheets
         worksheet = wb['Data']
-        return Response(worksheet)
+        # return Response(wb)
 
         # excel_data = list()
         # # iterating over the rows and
         # # getting value from each cell in row
-        # for row in worksheet.iter_rows():
-        #     row_data = list()
-        #     for cell in row:
-        #         row_data.append(str(cell.value))
-        #     excel_data.append(row_data)
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            excel_data.append(row_data)
 
         # return render(request, 'myapp/index.html', {"excel_data":excel_data}) 
 
@@ -454,7 +454,7 @@ def handleAllocation(data):
 @parser_classes([MultiPartParser,FormParser,JSONParser])
 def postExcelData(request, format=None):
     # if request.method == 'POST':
-    
+    return Response(request.data)
     username = request.data['Email'].split('@')[0]
     # return Response(request.data['Email'])
     

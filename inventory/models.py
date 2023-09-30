@@ -57,6 +57,9 @@ class Member(User):
     rank = models.CharField(max_length=10, default="tester")
     full_name = models.CharField(max_length=70, default="tester")
     team = models.CharField(max_length=70, blank=True, null=True)
+    techno_brain_email = models.CharField(max_length=70, blank=True, null=True)
+    phone_number = models.CharField(max_length=70, blank=True, null=True)
+    physical_address = models.CharField(max_length=70, blank=True, null=True)
     status = models.IntegerField(default=0)
     user_photo = models.ImageField(upload_to=upload_to, blank=True, null=True)
     
