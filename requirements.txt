@@ -79,7 +79,7 @@ six==1.16.0
 SQLAlchemy==1.4.31
 sqlparse==0.4.4
 # systemd-python==234
-ttystatus==0.38
+# ttystatus==0.38
 typing_extensions==4.0.1
 tzdata==2023.3
 tzlocal==4.1
