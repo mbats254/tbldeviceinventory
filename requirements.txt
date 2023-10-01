@@ -73,16 +73,16 @@ pytz-deprecation-shim==0.1.0.post0
 requests==2.31.0
 rest-framework-simplejwt==0.0.2
 # rpm==4.17.0
-SecretStorage==3.3.1
-simplejson==3.17.6
-six==1.16.0
-SQLAlchemy==1.4.31
-sqlparse==0.4.4
+# SecretStorage==3.3.1
+# simplejson==3.17.6
+# six==1.16.0
+# SQLAlchemy==1.4.31
+# sqlparse==0.4.4
 # systemd-python==234
-# ttystatus==0.38
-typing_extensions==4.0.1
-tzdata==2023.3
-tzlocal==4.1
+# # ttystatus==0.38
+# typing_extensions==4.0.1
+# tzdata==2023.3
+# tzlocal==4.1
 # ubuntu-advantage-tools==8001
 # ufw==0.36.1
 # unattended-upgrades==0.1
